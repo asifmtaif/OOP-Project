@@ -12,10 +12,6 @@ import java.util.logging.Logger;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-/**
- *
- * @author Sudhir Kushwaha
- */
 public class SignIn extends javax.swing.JFrame {
 
     /**
@@ -82,9 +78,9 @@ public class SignIn extends javax.swing.JFrame {
         });
         getContentPane().add(txtemail, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 360, 264, 41));
 
-        btnlogin.setBackground(new java.awt.Color(255, 51, 51));
+        btnlogin.setBackground(new java.awt.Color(153, 255, 204));
         btnlogin.setFont(new java.awt.Font("Sitka Display", 1, 14)); // NOI18N
-        btnlogin.setForeground(new java.awt.Color(255, 255, 255));
+        btnlogin.setForeground(new java.awt.Color(51, 51, 51));
         btnlogin.setText("Login now");
         btnlogin.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
@@ -133,7 +129,7 @@ public class SignIn extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 370, 80, 30));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/login page.jpg"))); // NOI18N
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 0, 1370, 770));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 1370, 770));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

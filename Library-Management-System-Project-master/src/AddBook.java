@@ -9,10 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Sudhir Kushwaha
- */
 public class AddBook extends javax.swing.JFrame {
 
     /**

@@ -10,10 +10,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Sudhir Kushwaha
- */
+
 public class ReturnBook extends javax.swing.JFrame {
     Connection c=Connect.ConnectToDB();
     PreparedStatement pst;
