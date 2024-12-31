@@ -1,10 +1,19 @@
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -17,15 +26,15 @@ import javax.swing.JOptionPane;
 
 
 public class IssueBook extends javax.swing.JFrame {
-        PreparedStatement pst;
-        ResultSet rs;
-        Connection c=Connect.ConnectToDB();
+        // PreparedStatement pst;
+        // ResultSet rs;
+        // Connection c=Connect.ConnectToDB();
     /**
      * Creates new form IssueBook
      */
     public IssueBook() {
         initComponents();
-        SimpleDateFormat  dat=new SimpleDateFormat("dd/MM/yyyy ");
+            SimpleDateFormat  dat=new SimpleDateFormat("dd/MM/yyyy ");
          Date d=new Date();
          txtissuedate.setText(dat.format(d));
          
@@ -155,17 +164,37 @@ public void clear(){
                 txtid.requestFocus();
         }
         else{
-            try{
-            pst=c.prepareStatement("UPDATE `library`.`book` SET `status` = 'Issued', issue = ?, due = ?,studentid =? WHERE (`id` = ?)");
-            pst.setString(1, txtissuedate.getText());
-            pst.setString(2, txtduedate.getText());
-            pst.setString(3, txtstudentid.getText());
-            pst.setString(4, txtid.getText());
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Book Issued");
-            clear();
-            } catch (SQLException ex) {
-                Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+            // try{
+            //     pst=c.prepareStatement("UPDATE `library`.`book` SET `status` = 'Issued', issue = ?, due = ?,studentid =? WHERE (`id` = ?)");
+            //     pst.setString(1, txtissuedate.getText());
+            //     pst.setString(2, txtduedate.getText());
+            //     pst.setString(3, txtstudentid.getText());
+            //     pst.setString(4, txtid.getText());
+            //     pst.executeUpdate();
+            //     JOptionPane.showMessageDialog(this, "Book Issued");
+            //     clear();
+            // } catch (SQLException ex) {
+            //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+            // }
+            try {
+                File f = new File("Issues.txt");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
+                bw.write(txtid.getText());
+                bw.newLine();
+                bw.write(txtstudentid.getText());
+                bw.newLine();
+                bw.write(txtissuedate.getText());
+                bw.newLine();
+                bw.write(txtduedate.getText());
+                bw.newLine();
+                bw.close();
+                JOptionPane.showMessageDialog(this, "Book Issued");
+                clear();
+                SimpleDateFormat  dat=new SimpleDateFormat("dd/MM/yyyy ");
+                Date d=new Date();
+                txtissuedate.setText(dat.format(d));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -176,18 +205,78 @@ public void clear(){
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
+        // try {
+        //     pst=c.prepareStatement("SELECT * FROM library.book where id=?");
+        //     pst.setString(1, txtid.getText());
+        //     rs=pst.executeQuery();
+        //     if(rs.next())
+        //             txtbookname.setText(rs.getString("name"));
+        //     else
+        //         JOptionPane.showMessageDialog(this, "Please Enter Valied Book ID");
+        // } catch (SQLException ex) {
+        //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+        // }        // TODO add your handling code here:
         try {
-            pst=c.prepareStatement("SELECT * FROM library.book where id=?");
-            pst.setString(1, txtid.getText());
-            rs=pst.executeQuery();
-            if(rs.next())
-                    txtbookname.setText(rs.getString("name"));
-            else
+            File f = new File("Books.txt");
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            String line;
+            List<Map<String, String>> books = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                String id = line;
+                String name = br.readLine();
+                String publisher = br.readLine();
+                String price = br.readLine();
+                String publishdate = br.readLine();
+                String status = br.readLine();
+                Map<String, String> map = new HashMap<>();
+                map.put("id", id);
+                map.put("name", name);
+                map.put("publisher", publisher);
+                map.put("price", price);
+                map.put("publishdate", publishdate);
+                map.put("status", status);
+                books.add(map);
+            }
+            
+            boolean found = false;
+            for (Map<String, String> book : books) {
+                if (book.get("id").equals(txtid.getText()) && book.get("status").equals("NotIssued")) {
+                    txtbookname.setText(book.get("name"));
+                    found = true;
+                    book.put("status", "Issued");
+
+                    File f1 = new File("Books.txt");
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(f1));
+                    for (Map<String, String> b : books) {
+                        bw.write(b.get("id"));
+                        bw.newLine();
+                        bw.write(b.get("name"));
+                        bw.newLine();
+                        bw.write(b.get("publisher"));
+                        bw.newLine();
+                        bw.write(b.get("price"));
+                        bw.newLine();
+                        bw.write(b.get("publishdate"));
+                        bw.newLine();
+                        bw.write(b.get("status"));
+                        bw.newLine();
+                    }
+                    bw.close();
+                    break;
+                }
+            }
+            if (!found) {
                 JOptionPane.showMessageDialog(this, "Please Enter Valied Book ID");
-        } catch (SQLException ex) {
-            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
-        }        // TODO add your handling code here:
+                return;
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
+
 
     /**
      * @param args the command line arguments

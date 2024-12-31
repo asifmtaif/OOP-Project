@@ -1,0 +1,36 @@
+1
+Harry Potter 1
+Jk
+200
+1999
+Issued
+2
+Nemesis
+Alo
+300
+2000
+Issued
+3
+Kew Kothao nei
+sdfa
+1000
+2001
+NotIssued
+1
+Harry Potter 1
+Jk
+200
+1999
+Issued
+2
+Nemesis
+Alo
+300
+2000
+Issued
+3
+Kew Kothao nei
+sdfa
+1000
+2001
+NotIssued

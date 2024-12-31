@@ -2,6 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -127,8 +130,8 @@ public class AddBook extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        PreparedStatement pst;
-        Connection c=Connect.ConnectToDB();
+        // PreparedStatement pst;
+        // Connection c=Connect.ConnectToDB();
         if(txtid.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "Please enter Book ID");
                 txtid.requestFocus();
@@ -151,17 +154,32 @@ public class AddBook extends javax.swing.JFrame {
         }
         else{
         try {
-            pst=c.prepareStatement("insert into library.book(id,name,publisher,price,year,status)values(?,?,?,?,?,?)");
-            pst.setString(1, txtid.getText());
-            pst.setString(2, txtname.getText());
-            pst.setString(3, txtpublisher.getText());
-            pst.setString(4, txtprice.getText());
-            pst.setString(5, txtyear.getText());
-            pst.setString(6, "NotIssued");
-            pst.executeUpdate();
+            // pst=c.prepareStatement("insert into library.book(id,name,publisher,price,year,status)values(?,?,?,?,?,?)");
+            // pst.setString(1, txtid.getText());
+            // pst.setString(2, txtname.getText());
+            // pst.setString(3, txtpublisher.getText());
+            // pst.setString(4, txtprice.getText());
+            // pst.setString(5, txtyear.getText());
+            // pst.setString(6, "NotIssued");
+            // pst.executeUpdate();
+            File f = new File("Books.txt");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f,true));
+            bw.write(txtid.getText());
+            bw.newLine();
+            bw.write(txtname.getText());
+            bw.newLine();
+            bw.write(txtpublisher.getText());
+            bw.newLine();
+            bw.write(txtprice.getText());
+            bw.newLine();
+            bw.write(txtyear.getText());
+            bw.newLine();
+            bw.write("NotIssued");
+            bw.newLine();
+            bw.close();
             JOptionPane.showMessageDialog(rootPane, "Record Saved","Saved",JOptionPane.INFORMATION_MESSAGE);
             clear();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
         } 
             }// TODO add your handling code here:

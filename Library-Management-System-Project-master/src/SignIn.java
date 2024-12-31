@@ -2,6 +2,12 @@
 
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -184,20 +190,61 @@ public class SignIn extends javax.swing.JFrame {
     }//GEN-LAST:event_btnloginMouseExited
 
     private void btnloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnloginActionPerformed
-        PreparedStatement pst;
-        ResultSet rs;
-        Connection c=Connect.ConnectToDB();
+        // PreparedStatement pst;
+        // ResultSet rs;
+        // Connection c=Connect.ConnectToDB();
+        // try {
+        //     pst=c.prepareStatement("SELECT * FROM library.login where userid=? AND password=?");
+        //     pst.setString(1,txtemail.getText());
+        //     pst.setString(2, txtpassword.getText());
+        //     rs=pst.executeQuery();
+        //     if(rs.next())
+        //         new home().setVisible(true);            
+        //     else
+        //         JOptionPane.showMessageDialog(this, "Please Enter Valied ID and Password");
+        // } catch (SQLException ex) {
+        //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+        // }
+        System.out.println("Login Button Clicked");
         try {
-            pst=c.prepareStatement("SELECT * FROM library.login where userid=? AND password=?");
-            pst.setString(1,txtemail.getText());
-            pst.setString(2, txtpassword.getText());
-            rs=pst.executeQuery();
-            if(rs.next())
-                new home().setVisible(true);            
-            else
+
+            File f = new File("users.txt");
+            // BufferReader br = new BufferReader(new FileReader(f));
+            if(txtemail.getText().equals("") || txtpassword.getText().equals("")){
                 JOptionPane.showMessageDialog(this, "Please Enter Valied ID and Password");
-        } catch (SQLException ex) {
-            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            String line;
+            boolean loginSuccessfull = false;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(" ");
+                String id = parts[0];
+                String password = parts[1];
+                System.out.println(id + " " + password);
+                if (txtemail.getText().equals(id) && txtpassword.getText().equals(password)) {
+                    loginSuccessfull = true;
+                    new home().setVisible(true);
+                    break;
+                } 
+            }
+            if (!loginSuccessfull) {
+                JOptionPane.showMessageDialog(this, "Please Enter Valied ID and Password");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                // File f = new File("users.txt");
+                // BufferedWriter bw = new BufferedWriter(new FileReader(f));
+                // String line;
+
+                // create new fiwl named users.txt
+                File f = new File("users.txt");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+                bw.write("admin@mail.com admin");
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
     }//GEN-LAST:event_btnloginActionPerformed
 

@@ -5,6 +5,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 import javax.swing.JOptionPane;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -127,8 +131,8 @@ public void clear(){
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void btnsaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsaveActionPerformed
-        PreparedStatement pst;
-        Connection c=Connect.ConnectToDB();
+        // PreparedStatement pst;
+        // Connection c=Connect.ConnectToDB();
         if(txtid.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "Please enter Student ID");
                 txtid.requestFocus();
@@ -150,19 +154,45 @@ public void clear(){
                 txtsem.requestFocus();
         }
         else{
-        try {
-            pst=c.prepareStatement("INSERT INTO `library`.`student` (`id`, `name`, `course`, `branch`, `semester`) VALUES (?,?,?,?,?)");
-            pst.setString(1, txtid.getText());
-            pst.setString(2, txtname.getText());
-            pst.setString(3, txtcourse.getText());
-            pst.setString(4, txtbranch.getText());
-            pst.setString(5, txtsem.getText());
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(rootPane, "Record Saved","Saved",JOptionPane.INFORMATION_MESSAGE);
-            clear();
-        } catch (SQLException ex) {
-            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+            // try {
+            //     pst=c.prepareStatement("INSERT INTO `library`.`student` (`id`, `name`, `course`, `branch`, `semester`) VALUES (?,?,?,?,?)");
+            //     pst.setString(1, txtid.getText());
+            //     pst.setString(2, txtname.getText());
+            //     pst.setString(3, txtcourse.getText());
+            //     pst.setString(4, txtbranch.getText());
+            //     pst.setString(5, txtsem.getText());
+            //     pst.executeUpdate();
+            //     JOptionPane.showMessageDialog(rootPane, "Record Saved","Saved",JOptionPane.INFORMATION_MESSAGE);
+            //     clear();
+            // } catch (SQLException ex) {
+            //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+            // } 
+            try {
+                File file = new File("StudentRegsitrations.txt");
+                if (!file.exists()) {
+                    file.createNewFile();
+                    System.out.println("FIle created");
+                }
+                BufferedWriter fw = new BufferedWriter(new FileWriter(file, true)); 
+                // fw.write(txtid.getText() + "\n" + txtname.getText() + "\n" + txtcourse.getText() + "\n" + txtbranch.getText() + "\n" + txtsem.getText() + "\n");
+                fw.write(txtid.getText());
+                fw.newLine();
+                fw.write(txtname.getText());
+                fw.newLine();
+                fw.write(txtcourse.getText());
+                fw.newLine();
+                fw.write(txtbranch.getText());
+                fw.newLine();
+                fw.write(txtsem.getText());
+                fw.newLine();
+                fw.close();
+
+                JOptionPane.showMessageDialog(rootPane, "Record Saved","Saved",JOptionPane.INFORMATION_MESSAGE);
+                clear();
+                System.out.println("Record Saved");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // TODO add your handling code here:

@@ -4,21 +4,32 @@
  */
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class ReturnBook extends javax.swing.JFrame {
-    Connection c=Connect.ConnectToDB();
-    PreparedStatement pst;
-    ResultSet rs;
+    // Connection c=Connect.ConnectToDB();
+    // PreparedStatement pst;
+    // ResultSet rs;
                 
     /**
      * Creates new form ReturnBook
      */
+    private List<Map<String, String>> issues;
     public ReturnBook() {
         initComponents();
     }
@@ -152,27 +163,114 @@ public class ReturnBook extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        try {
-            pst=c.prepareStatement("SELECT * FROM library.book where id=?");
-            pst.setString(1, txtstudentid.getText());
-            rs=pst.executeQuery();
-            if(rs.next()){
-                    txtbookname.setText(rs.getString("name"));
-                    txtbookid.setText(rs.getString("id"));
-                    txtissuedate.setText(rs.getString("issue"));
-                    txtduedate.setText(rs.getString("due"));
-            }
-            else
-                JOptionPane.showMessageDialog(this, "Please Enter Valied Student ID");
-            pst=c.prepareStatement("SELECT * FROM library.student where id=?");
-            pst.setString(1, txtstudentid.getText());
-            rs=pst.executeQuery();
-            if(rs.next())
-                    txtstudentname.setText(rs.getString("name"));
+        // try {
+        //     pst=c.prepareStatement("SELECT * FROM library.book where id=?");
+        //     pst.setString(1, txtstudentid.getText());
+        //     rs=pst.executeQuery();
+        //     if(rs.next()){
+        //             txtbookname.setText(rs.getString("name"));
+        //             txtbookid.setText(rs.getString("id"));
+        //             txtissuedate.setText(rs.getString("issue"));
+        //             txtduedate.setText(rs.getString("due"));
+        //     }
+        //     else
+        //         JOptionPane.showMessageDialog(this, "Please Enter Valied Student ID");
+        //     pst=c.prepareStatement("SELECT * FROM library.student where id=?");
+        //     pst.setString(1, txtstudentid.getText());
+        //     rs=pst.executeQuery();
+        //     if(rs.next())
+        //             txtstudentname.setText(rs.getString("name"));
             
-        } catch (SQLException ex) {
-            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
-        }        // TODO add your handling code here:
+        // } catch (SQLException ex) {
+        //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+        // }        // TODO add your handling code here:
+        try {
+            File f = new File("StudentRegsitrations.txt");
+            BufferedReader br = new BufferedReader(new FileReader(f));
+
+            String line;
+            String studentid = txtstudentid.getText();
+            boolean studentfound = false;
+            while((line = br.readLine()) != null){
+                if(studentid.equals(line)){
+                    txtstudentname.setText(br.readLine());
+                    studentfound = true;
+                    break;
+                }
+                br.readLine();
+                br.readLine();
+                br.readLine();
+                br.readLine();
+            }
+            if(!studentfound){
+                JOptionPane.showMessageDialog(rootPane, "Student ID not found");
+                txtstudentid.setText("");
+                txtstudentid.requestFocus();
+                return;
+            }
+            br.close();
+            
+            f = new File("Books.txt");
+            br = new BufferedReader(new FileReader(f));
+
+            
+            String bookid = txtbookid.getText();
+            boolean bookfound = false;
+            while((line = br.readLine()) != null){
+                if(bookid.equals(line)){
+                    txtbookname.setText(br.readLine());
+                    bookfound = true;
+                    break;
+                }
+                br.readLine();
+                br.readLine();
+                br.readLine();
+                br.readLine();
+                br.readLine();
+            }
+            if(!bookfound){
+                JOptionPane.showMessageDialog(rootPane, "Book ID not found");
+                txtbookid.setText("");
+                txtbookid.requestFocus();
+                return;
+            }
+
+            f = new File("Issues.txt");
+            br = new BufferedReader(new FileReader(f));
+
+            boolean issuefound = false;
+            issues = new ArrayList<>();
+
+            while((line = br.readLine()) != null){
+                // if(bookid.equals(line) && studentid.equals(br.readLine())){
+                //     txtissuedate.setText(br.readLine());
+                //     txtduedate.setText(br.readLine());
+                //     issuefound = true;
+                //     break;
+                // }
+                Map<String, String> issue = new HashMap<>();
+                issue.put("bookid", line);
+                issue.put("studentid", br.readLine());
+                issue.put("issuedate", br.readLine());
+                issue.put("duedate", br.readLine());
+                issues.add(issue);
+                if(issue.get("bookid").equals(bookid) && issue.get("studentid").equals(studentid)){
+                    txtissuedate.setText(issue.get("issuedate"));
+                    txtduedate.setText(issue.get("duedate"));
+                    issuefound = true;
+                    break;
+                }
+            }
+            if(!issuefound){
+                JOptionPane.showMessageDialog(rootPane, "Book not issued to this student");
+                txtbookid.setText("");
+                txtbookid.requestFocus();
+                return;
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, "Error: " + e.getMessage());
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -181,15 +279,70 @@ public class ReturnBook extends javax.swing.JFrame {
                 txtstudentid.requestFocus();
         }
         else{
-            try{
-            pst=c.prepareStatement("UPDATE `library`.`book` SET `status` = 'NotIssue', `issue` = '', `due` = '', `studentid` = '' WHERE (`id` = ?)");
-            pst.setString(1, txtstudentid.getText());
-            pst.executeUpdate();
+            // try{
+            // pst=c.prepareStatement("UPDATE `library`.`book` SET `status` = 'NotIssue', `issue` = '', `due` = '', `studentid` = '' WHERE (`id` = ?)");
+            // pst.setString(1, txtstudentid.getText());
+            // pst.executeUpdate();
+            // JOptionPane.showMessageDialog(this, "Return Successfull");
+            // clear();
+            // } catch (SQLException ex) {
+            //     Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+            // }
+            for(Map<String, String> issue : issues){
+                if(issue.get("bookid").equals(txtbookid.getText()) && issue.get("studentid").equals(txtstudentid.getText())){
+                    issues.remove(issue);
+                    break;
+                }
+            }
+            try {
+                File f = new File("Books.txt");
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                String line;
+                List<Map<String, String>> books = new ArrayList<>();
+
+                while((line = br.readLine()) != null){
+                    Map<String, String> book = new HashMap<>();
+                    book.put("id", line);
+                    book.put("name", br.readLine());
+                    book.put("publisher", br.readLine());
+                    book.put("price", br.readLine());
+                    book.put("year", br.readLine());
+                    book.put("status", br.readLine());
+                    books.add(book);
+                }
+
+                br.close();
+                for(Map<String, String> book : books){
+                    if(book.get("id").equals(txtbookid.getText())){
+                        book.put("status", "NotIssued");
+                        break;
+                    }
+                }
+                f = new File("Books.txt");
+                f.delete();
+                f.createNewFile();
+                for(Map<String, String> book : books){
+                    try (BufferedWriter fw = new BufferedWriter(new FileWriter(f, true))) {
+                        fw.write(book.get("id"));
+                        fw.newLine();
+                        fw.write(book.get("name"));
+                        fw.newLine();
+                        fw.write(book.get("publisher"));
+                        fw.newLine();
+                        fw.write(book.get("price"));
+                        fw.newLine();
+                        fw.write(book.get("year"));
+                        fw.newLine();
+                        fw.write(book.get("status"));
+                        fw.newLine();
+                    }
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(rootPane, "Error: " + e.getMessage());
+            }
             JOptionPane.showMessageDialog(this, "Return Successfull");
             clear();
-            } catch (SQLException ex) {
-                Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
         }
             // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
